@@ -1,6 +1,6 @@
-#!/usr/bin/python
+#!/usr/local/Cellar/python/2.7.9/Frameworks/Python.framework/Versions/2.7/bin/python
 
-# (c) Copyright Argusat Limited 2015
+# (c) Copyright 2015 Argusat Limited
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,8 @@
 
 import sys
 import csv
-import json
+import couchdb
+import argparse
 
 class ParserState:
     reading_header = 1
@@ -56,6 +57,9 @@ class ParserState:
         print "Illegal state transition in state: ", self.current_state
 
 
+couchdb_hostname = 'igrow.iriscouch.com'
+couchdb_port = 5984
+db_name = 'seeds'
 
 preamble_text = 'Vegetable Seed Order'
 supplier_column = 0
@@ -67,8 +71,30 @@ seeds = []
 preamble_read = False
 num_columns = -1
 
-with open(sys.argv[1], 'rb') as csvfile:
-    reader = csv.reader(csvfile, delimiter=',')
+parser = argparse.ArgumentParser(description='Manage the iGrow seeds database')
+parser.add_argument('--deletedb', dest='deletedb', action='store_true',
+                   help='deletes the existing seed database before any other action')
+parser.add_argument('--input', dest='ifile', type=str, nargs=1,
+                   help='CSV input file')
+
+args = parser.parse_args()
+couch = couchdb.Server('http://{0}:{1}/'.format(couchdb_hostname, couchdb_port))
+
+if (args.deletedb):
+    try:
+        couch.delete(db_name)
+        seedsdb = couch.create(db_name)
+    except couchdb.http.ResourceNotFound:
+        pass
+else:
+    try:
+        seedsdb = couch[db_name]
+    except couchdb.http.ResourceNotFound:
+        seedsdb = couch.create(db_name)
+
+
+with open(args.ifile[0], 'rb') as ifile:
+    reader = csv.reader(ifile, delimiter=',')
 
     for row in reader:
         # skip the preamble
@@ -77,21 +103,23 @@ with open(sys.argv[1], 'rb') as csvfile:
                 preamble_read = True
                 continue
 
+        # set the number of columns to the
+        # length of the column label row
         if (num_columns == -1):
             num_columns = len(row)
-            print num_columns, " columns."
+            print num_columns, ' columns.'
 
         # catch all blank rows
         num_blank_cols = sum(column == '' for column in row)
         if (num_blank_cols >= num_columns):
             continue
 
-        print num_blank_cols, ", ".join(row)
+        print num_blank_cols, ', '.join(row)
 
         if (current_state.get_state() == ParserState.reading_header):
 
             fields = row;
-            
+
             current_state.parsed_header()
 
         elif (current_state.get_state() == ParserState.reading_supplier_name):
@@ -114,9 +142,6 @@ with open(sys.argv[1], 'rb') as csvfile:
 
             seed = dict(tuple_list)
             seeds.append(seed)
-
-seedjson = json.dumps(seeds, separators=(',',':'), indent=4)
-
-print seedjson
-
+            doc_id, rev = seedsdb.save(seed)
+            print doc_id, ' ', rev
 
