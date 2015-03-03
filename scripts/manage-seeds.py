@@ -120,6 +120,9 @@ with open(args.ifile[0], 'rb') as ifile:
 
             fields = row;
 
+            fields = [field.lower() for field in fields]
+            fields = [str(field).replace(' ', '_') for field in fields]
+
             current_state.parsed_header()
 
         elif (current_state.get_state() == ParserState.reading_supplier_name):
@@ -142,6 +145,7 @@ with open(args.ifile[0], 'rb') as ifile:
 
             seed = dict(tuple_list)
             seeds.append(seed)
+            print seed
             doc_id, rev = seedsdb.save(seed)
             print doc_id, ' ', rev
 
