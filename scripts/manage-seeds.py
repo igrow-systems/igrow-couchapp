@@ -20,6 +20,8 @@ import sys
 import csv
 import couchdb
 import argparse
+import time
+import getpass
 
 class ParserState:
     reading_header = 1
@@ -74,23 +76,31 @@ num_columns = -1
 parser = argparse.ArgumentParser(description='Manage the iGrow seeds database')
 parser.add_argument('--deletedb', dest='deletedb', action='store_true',
                    help='deletes the existing seed database before any other action')
+parser.add_argument('--dryrun', dest='dryrun', action='store_true',
+                   help='do not modify database')
 parser.add_argument('--input', dest='ifile', type=str, nargs=1,
                    help='CSV input file')
+parser.add_argument('--user', dest='user', type=str, default='admin', 
+                    nargs='?', help='admin user')
+
 
 args = parser.parse_args()
-couch = couchdb.Server('http://{0}:{1}/'.format(couchdb_hostname, couchdb_port))
 
-if (args.deletedb):
-    try:
-        couch.delete(db_name)
-        seedsdb = couch.create(db_name)
-    except couchdb.http.ResourceNotFound:
-        pass
-else:
-    try:
-        seedsdb = couch[db_name]
-    except couchdb.http.ResourceNotFound:
-        seedsdb = couch.create(db_name)
+if (not args.dryrun):
+    password = getpass.getpass()
+    couch = couchdb.Server('http://{0}:{1}@{2}:{3}/'.format(args.user, password, couchdb_hostname, couchdb_port))
+
+    if (args.deletedb):
+        try:
+            couch.delete(db_name)
+            seedsdb = couch.create(db_name)
+        except couchdb.http.ResourceNotFound:
+            pass
+    else:
+        try:
+            seedsdb = couch[db_name]
+        except couchdb.http.ResourceNotFound:
+            seedsdb = couch.create(db_name)
 
 
 with open(args.ifile[0], 'rb') as ifile:
@@ -143,9 +153,23 @@ with open(args.ifile[0], 'rb') as ifile:
                 else:
                     tuple_list.append((fields[i], current_supplier))
 
+            localtime   = time.localtime()
+            timeString  = time.strftime("%Y/%m/%d %H:%M:%S ", localtime)
+
+            # is DST in effect?
+            timezone    = -(time.altzone if localtime.tm_isdst else time.timezone)
+#            timeString += "Z" if timezone == 0 else "+" if timezone > 0 else "-"
+            timeString += "+" if timezone >= 0 else "-"
+            timeString += time.strftime("%H%M'", time.gmtime(abs(timezone)))
+            # add a document type of 'seed' for sanity later
+            tuple_list.append(('type', 'seed'))
+            tuple_list.append(('created', timeString))
+            tuple_list.append(('modified', timeString))
+            tuple_list.append(('user', 'system'))
             seed = dict(tuple_list)
             seeds.append(seed)
             print seed
-            doc_id, rev = seedsdb.save(seed)
-            print doc_id, ' ', rev
+            if (not args.dryrun):
+                doc_id, rev = seedsdb.save(seed)
+                print doc_id, ' ', rev
 
