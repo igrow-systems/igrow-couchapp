@@ -59,7 +59,7 @@ class ParserState:
 
 couchdb_hostname = 'igrow.iriscouch.com'
 couchdb_port = 5984
-db_name = 'seeds'
+db_name = 'igrow'
 
 preamble_text = 'Vegetable Seed Order'
 supplier_column = 0
