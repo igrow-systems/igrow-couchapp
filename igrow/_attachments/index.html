@@ -1,22 +1,25 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Example CouchApp</title>
+    <title>iGrow Horticultural System</title>
     <link rel="stylesheet" href="style/main.css" type="text/css">
   </head>
   <body>
     <div id="account"></div>
 
-    <h1>Example CouchApp</h1>
+    <h1>iGrow Horticultural System</h1>
 
     <div id="profile">
     </div>
     <div id="content"></div>
 
     <div id="sidebar">
-      <p>Edit welcome message.</p>
-      <p>Ideas: You could easily turn this into a photo sharing app, 
-          or a grocery list, or a chat room. <a href="https://github.com/couchapp/example">Code for this app is on Github.</a></p>
+      <p>Some actions:</p>
+      <p>Add seeds</p>
+      <p>Sow seeds</p>
+      <p>Pot on seedlings</p>
+      <p>Print labels</p>
+      <p>View reports</p>
     </div>
   </body>
   <script src="/_utils/script/sha1.js"></script>
@@ -29,31 +32,31 @@
   <script src="vendor/couchapp/jquery.mustache.js"></script>
 
 <!-- templates used by app.js -->
-  <script id="new-message" type="text/x-mustache" charset="utf-8">
+  <script id="new-seed" type="text/x-mustache" charset="utf-8">
       <div class="avatar">
         {{#gravatar_url}}<img src="{{gravatar_url}}"/>{{/gravatar_url}}
         <div class="name">
-          {{name}}
+          {{common_name}}
         </div>
       </div>
-      <form id="create-message">
-        <label>New message from {{nickname}}: <input type="text" name="message" size=60 value=""></label>
+      <form id="create-seed">
+        <label>New seed from {{nickname}}: <input type="text" name="message" size=60 value=""></label>
       </form>
       <div style="clear:left;"></div>
   </script>
 
-  <script id="recent-messages" type="text/x-mustache" charset="utf-8">
-        <h3>Recent Messages</h3>
+  <script id="recent-seeds" type="text/x-mustache" charset="utf-8">
+        <h3>Recent Seeds</h3>
         <ul id="items">
           {{#items}}
             <li>
               <div class="avatar">
                 {{#gravatar_url}}<img src="{{gravatar_url}}" alt="{{name}}"/>{{/gravatar_url}}
                 <div class="name">
-                  {{nickname}}
+                  {{common_name}}
                 </div>
               </div>
-              <p>{{message}}</p>
+              <p>{{variety}}</p>
               <div style="clear:left;"></div>
             </li>
           {{/items}}
