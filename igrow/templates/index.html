@@ -48,18 +48,21 @@
   <script id="recent-seeds" type="text/x-mustache" charset="utf-8">
         <h3>Recent Seeds</h3>
         <ul id="items">
-          {{#items}}
+          {{#recentseeds}}
             <li>
               <div class="avatar">
-                {{#gravatar_url}}<img src="{{gravatar_url}}" alt="{{name}}"/>{{/gravatar_url}}
+                {{#variety_url}}<img src="{{variety_url}}" alt="{{common_name}}"/>{{/variety_url}}
                 <div class="name">
                   {{common_name}}
                 </div>
               </div>
-              <p>{{variety}}</p>
+              <div class="name">{{variety_or_cultivar}}</div>
+              <div class="name">{{supplier}}</div>
+              <div class="name">{{pack_size}}</div>
+              <div class="name">{{price}}</div>
               <div style="clear:left;"></div>
             </li>
-          {{/items}}
+          {{/recentseeds}}
         </ul>
         <p><em>Protip:</em> If you setup continuous replication between this database and a remote one, this list will reflect remote changes in near real-time.</p>
         <p>This would be a good place to add pagination.</p>

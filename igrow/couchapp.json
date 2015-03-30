@@ -1,4 +1,5 @@
 {
-    "name": "iGrow",
-    "description": "The iGrow web application prototype"
+    "name"        : "iGrow",
+    "description" : "The iGrow web application prototype",
+    "index"       : "_list/index/recent-seeds?descending=true&limit=10"
 }
