@@ -11,7 +11,7 @@ function(doc, req) {
   var data = {
     header : {
       index : indexPath,
-      blogName : ddoc.blog.title,
+      blogName : ddoc.igrow.title,
       feedPath : feedPath
 //      commentsFeed : commentsFeed
     },

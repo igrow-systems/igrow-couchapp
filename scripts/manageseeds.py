@@ -59,7 +59,6 @@ class ParserState:
         print "Illegal state transition in state: ", self.current_state
 
 
-couchdb_hostname = 'igrow.iriscouch.com'
 couchdb_port = 5984
 db_name = 'igrow'
 
@@ -82,13 +81,14 @@ parser.add_argument('--input', dest='ifile', type=str, nargs=1,
                    help='CSV input file')
 parser.add_argument('--user', dest='user', type=str, default='admin', 
                     nargs='?', help='admin user')
-
+parser.add_argument('--host', dest='couchdb_hostname', type=str, default='localhost',
+                    nargs='?', help='CouchDB hostname')
 
 args = parser.parse_args()
 
 if (not args.dryrun):
     password = getpass.getpass()
-    couch = couchdb.Server('http://{0}:{1}@{2}:{3}/'.format(args.user, password, couchdb_hostname, couchdb_port))
+    couch = couchdb.Server('http://{0}:{1}@{2}:{3}/'.format(args.user, password, args.couchdb_hostname, couchdb_port))
 
     if (args.deletedb):
         try:
@@ -166,6 +166,7 @@ with open(args.ifile[0], 'rb') as ifile:
             tuple_list.append(('created', timeString))
             tuple_list.append(('modified', timeString))
             tuple_list.append(('user', 'system'))
+            tuple_list.append(('variety_url','http://vegetalis.co.uk/images/made/images/uploads/Tomato_Rambling_Red_Stripe_10046117_360_360_c1_c_c_0_0.jpg'))
             seed = dict(tuple_list)
             seeds.append(seed)
             print seed

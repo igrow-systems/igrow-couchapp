@@ -27,7 +27,7 @@ function (head, req) {
       db : req.path[0],
       design : req.path[2],
       feedPath : feedPath,
-      newPostPath : path.show("edit"),
+      newPostPath : path.show("seed"),
       assets : path.asset(),
       recentseeds : List.withRows(function(row) {
         var seed = row.value;
@@ -35,10 +35,12 @@ function (head, req) {
         return {
           common_name : seed.common_name,
           variety_or_cultivar : seed.variety_or_cultivar,
+          variety_url : seed.variety_url,
           supplier : seed.supplier,
           pack_size : seed.pack_size,
           price : seed.price,
           created : seed.created,
+          user : seed.user,
           link : path.list('seed','seed-page', {startkey : [row.id]})
         };
       }),

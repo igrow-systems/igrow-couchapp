@@ -1,72 +1,61 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>iGrow Horticultural System</title>
-    <link rel="stylesheet" href="style/main.css" type="text/css">
-  </head>
-  <body>
-    <div id="account"></div>
+<head>
+<title>iGrow Horticultural System</title>
+<link rel="stylesheet" href="../../style/screen.css" type="text/css">
+<link rel="alternate" type="application/atom+xml" title="Atom Feed"
+	href="{{ feedPath }}" />
+</head>
+<body>
+	{{>header}}
+	<div id="sidebar">
+		<p>Some actions:</p>
+		<p>Add seeds</p>
+		<p>Sow seeds</p>
+		<p>Pot on seedlings</p>
+		<p>Print labels</p>
+		<p>View reports</p>
+	</div>
+	<div id="content">
+			<h3>Recent Seeds</h3>
+			<ul id="seeds">
+				{{#recentseeds}}
+				<li>
+					<div>
+						<div class="varietyimage"><img src="{{variety_url}}" alt="{{common_name}}" height="64" width="64" /></div>
+						<div class="name">{{common_name}}</div>
+					</div>
+					
+					<div>
+						<span>{{variety_or_cultivar}}</span>
+						<span>{{supplier}}</span>
+						<span>{{pack_size}}</span>
+						<span>{{price}}</span>
+						<div class="by">
+	              			<span class="date">{{ created }}</span> 
+	              			by {{user}}
+	            		</div>
+					</div>
+					
+				</li>
+				{{/recentseeds}}
+			</ul>
+			<div class="paginate">
+				<a href="{{ older }}">older posts</a> <a href="{{5}}">5</a> <a
+					href="{{10}}">10</a> <a href="{{25}}">25</a>
+			</div>
+		
+	</div>
+</body>
 
-    <h1>iGrow Horticultural System</h1>
-
-    <div id="profile">
-    </div>
-    <div id="content"></div>
-
-    <div id="sidebar">
-      <p>Some actions:</p>
-      <p>Add seeds</p>
-      <p>Sow seeds</p>
-      <p>Pot on seedlings</p>
-      <p>Print labels</p>
-      <p>View reports</p>
-    </div>
-  </body>
-  <script src="/_utils/script/sha1.js"></script>
-  <script src="/_utils/script/json2.js"></script>
-  <script src="/_utils/script/jquery.js"></script>
-  <script src="/_utils/script/jquery.couch.js"></script>
-  <script src="vendor/couchapp/jquery.couchLogin.js"></script>
-  <script src="vendor/couchapp/jquery.couchProfile.js"></script>
-  <script src="vendor/couchapp/md5.js"></script>
-  <script src="vendor/couchapp/jquery.mustache.js"></script>
-
-<!-- templates used by app.js -->
-  <script id="new-seed" type="text/x-mustache" charset="utf-8">
-      <div class="avatar">
-        {{#gravatar_url}}<img src="{{gravatar_url}}"/>{{/gravatar_url}}
-        <div class="name">
-          {{common_name}}
-        </div>
-      </div>
-      <form id="create-seed">
-        <label>New seed from {{nickname}}: <input type="text" name="message" size=60 value=""></label>
-      </form>
-      <div style="clear:left;"></div>
-  </script>
-
-  <script id="recent-seeds" type="text/x-mustache" charset="utf-8">
-        <h3>Recent Seeds</h3>
-        <ul id="items">
-          {{#recentseeds}}
-            <li>
-              <div class="avatar">
-                {{#variety_url}}<img src="{{variety_url}}" alt="{{common_name}}"/>{{/variety_url}}
-                <div class="name">
-                  {{common_name}}
-                </div>
-              </div>
-              <div class="name">{{variety_or_cultivar}}</div>
-              <div class="name">{{supplier}}</div>
-              <div class="name">{{pack_size}}</div>
-              <div class="name">{{price}}</div>
-              <div style="clear:left;"></div>
-            </li>
-          {{/recentseeds}}
-        </ul>
-        <p><em>Protip:</em> If you setup continuous replication between this database and a remote one, this list will reflect remote changes in near real-time.</p>
-        <p>This would be a good place to add pagination.</p>
-  </script>
-  <script src="script/app.js"></script>
-
+{{>scripts}}
+<!-- 
+<script type="text/javascript" charset="utf-8">
+	$.couch.app(function() {
+		$("#tagcloud").evently(this.ddoc.evently.tagcloud, this);
+	}, {
+		db : "{{db}}",
+		design : "{{design}}"
+	});
+</script>  -->
 </html>
