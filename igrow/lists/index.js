@@ -19,7 +19,7 @@ function (head, req) {
     var stash = {
       header : {
         index : indexPath,
-        blogName : ddoc.igrow.title,
+        igrowName : ddoc.igrow.title,
         feedPath : feedPath,
         commentsFeed : commentsFeed
       },
@@ -28,10 +28,10 @@ function (head, req) {
       design : req.path[2],
       feedPath : feedPath,
       sidebar : {
-        seedPath : path.show("seed"),
-        sowingPath : path.show("sowing"),
-        pottingPath : path.show("potting"),
-        labelsPath : path.list("labels")
+        seedPath : path.show("seed")+"/",
+        sowingPath : path.show("sowing")+"/",
+        pottingPath : path.show("potting")+"/",
+        labelsPath : path.list("labels")+"/"
       },
       assets : path.asset(),
       recentseeds : List.withRows(function(row) {
@@ -72,7 +72,7 @@ function (head, req) {
     // generate the feed header
     var feedHeader = Atom.header({
       updated : (row ? new Date(row.value.created_at) : new Date()),
-      title : ddoc.blog.title,
+      title : ddoc.igrow.title,
       feed_id : path.absolute(indexPath),
       feed_link : path.absolute(feedPath),
     });

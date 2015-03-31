@@ -6,25 +6,17 @@
   </head>
   <body>
     {{>header}}
+    {{>sidebar}}
     <div id="tagcloud"></div>
     <div id="content">
     <!-- form to create a post -->
-    <form id="new-seed" action="new.html" method="post">
+    <form id="new-sowing" action="new.html" method="post">
       <h1>{{pageTitle}}</h1>
-      <p><label for="binomial_name">Binomial Name</label>
-      <input type="text" name="binomial_name" size="50" value="{{binomial_name}}"></input></p>
-        <p><label>Common Name</label>
-          <input type="text" size="50" name="common_name" value="{{common_name}}"></p>
-      <p><label for="variety_or_cultivar">Variety or Cultivar</label>
-      <input type="text" name="variety_or_cultivar" size="50" value="{{variety_or_cultivar}}"></input></p>
-      <p><label for="supplier">Supplier</label>
-      <input type="text" name="supplier" size="40" value="{{supplier}}"></input></p>
-      <p><label for="supplier_id">Supplier ID</label>
-      <input type="text" name="supplier_id" size="20" value="{{supplier_id}}"></input></p>
-      <p><label for="pack_size">Pack Size</label>
-      <input type="text" name="pack_size" value="{{pack_size}}"></input></p>
-      <p><label for="price">Price</label>
-      <input type="text" name="price" value="{{price}}"></input></p>
+      <p><label for="seed">Seed</label>
+      <select name="seed_id"></select></p>
+      
+      <p><label for="quantity">Quantity</label>
+      <input type="text" name="quantity" value="{{quantity}}"></input></p>
       <p>
         <label for="tags">Click tags to add them. (split by ',')</label>
         <input size="50" type="text" name="tags" value="{{tags}}">
@@ -46,40 +38,16 @@
 
       var path = app.require("vendor/couchapp/lib/path").init(app.req);
       var postForm, igrow = app.require("lib/igrow");
-      
-      // extend the tagcloud so that clicks add tags to the current post
-      var tagcloud = $.extend(true, {}, this.ddoc.evently.tagcloud, {
-        _init : {
-          selectors : {
-            a : {
-              click : function() {
-                var tag = $(this).text();
-                var tags = $("input[name=tags]").val();
-                if (tags) tags = tags+", ";
-                $("input[name=tags]").val(tags + tag);
-                return false;
-              }
-            }
-          }
-        }
-      });
-      $("#tagcloud").evently(tagcloud, this);
-      
       var postDoc = {{{doc}}};
 
       $('label[for=common_name]').append(' <em>with '+(postDoc.format||'html')+'</em>');
       $("form#new-seed").submit(function() {
         postDoc.user = $$("#account").userCtx.name;
-        postDoc.binomial_name = $("input[name=binomial_name]").val();
-        postDoc.common_name = $("input[name=common_name]").val();
-        postDoc.variety_or_cultivar = $("input[name=variety_or_cultivar]").val();
-        postDoc.supplier = $("input[name=supplier]").val();
-        postDoc.pack_size = $("input[name=pack_size]").val();
-        postDoc.price = $("input[name=price]").val();
-        postDoc.supplier_id = $("input[name=supplier_id]").val();
-        postDoc.variety_url = 'http://vegetalis.co.uk/images/made/images/uploads/Tomato_Rambling_Red_Stripe_10046117_360_360_c1_c_c_0_0.jpg';
         
-        postDoc.type = 'seed';
+        postDoc.quantity = $("input[name=quantity]").val();
+        postDoc.supplier_id = $("input[name=supplier_id]").val();
+        
+        postDoc.type = 'sowing';
         
         var dtags = [], tags = $("input[name=tags]").val().split(",");
         for(var i in tags) {
@@ -88,17 +56,17 @@
         postDoc.tags = dtags;
         if (!postDoc.created) {
           postDoc.created = new Date();
-          postDoc.modified = postDoc.Created;
+          postDoc.modified = postDoc.created;
         }
         app.db.saveDoc(postDoc, {
           success : function(resp) {
             $("#saved").text("Saved _rev: "+resp.rev).fadeIn(500).fadeOut(6000);
-            $('h1').html('Editing <a href="'+path.show('seed',resp.id)+'">'+resp.id+'</a> by '+postDoc.user);
+            $('h1').html('Editing <a href="'+path.show('sowing',resp.id)+'">'+resp.id+'</a> by '+postDoc.user);
           }
         });
         return false;
       });
-
+      
       if (postDoc._id) {
         $('#preview').before('<input type="button" id="delete" value="Delete Seed"/> ');
         $("#delete").click(function() {
@@ -118,6 +86,7 @@
         $('#show-preview').html(html);
         $('body').scrollTo('#show-preview', {duration: 500});
       });
+      
     });
   </script>
 </html>
