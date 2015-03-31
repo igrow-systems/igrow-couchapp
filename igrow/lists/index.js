@@ -27,7 +27,12 @@ function (head, req) {
       db : req.path[0],
       design : req.path[2],
       feedPath : feedPath,
-      newPostPath : path.show("seed"),
+      sidebar : {
+        seedPath : path.show("seed"),
+        sowingPath : path.show("sowing"),
+        pottingPath : path.show("potting"),
+        labelsPath : path.list("labels")
+      },
       assets : path.asset(),
       recentseeds : List.withRows(function(row) {
         var seed = row.value;

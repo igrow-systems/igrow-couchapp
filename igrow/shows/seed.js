@@ -6,14 +6,14 @@ function(doc, req) {
 
   var indexPath = path.list('index','recent-seeds',{descending:true, limit:10});
   var feedPath = path.list('index','recent-seeds',{descending:true, limit:10, format:"atom"});
-  //var commentsFeed = path.list('seeds','seeds',{descending:true, limit:10, format:"atom"});
+  var commentsFeed = path.list('seeds','seeds',{descending:true, limit:10, format:"atom"});
 
   var data = {
     header : {
       index : indexPath,
       blogName : ddoc.igrow.title,
-      feedPath : feedPath
-//      commentsFeed : commentsFeed
+      feedPath : feedPath,
+      commentsFeed : commentsFeed
     },
     scripts : {},
     pageTitle : doc ? "Edit: " + doc.title : "Create a new seed",
