@@ -43,14 +43,16 @@ function(doc, req) {
 	      type : "sowing"
 	    });
 	    
-	    data.seeds = List.withRows(function(row) {
+	    /*data.seeds = List.withRows(function(row) {
+	      log(row);
           var v = row.value;
           if (v.type != "seed") {
             return;
           }
-          // keep getting comments until we get to the next post...
+          // keep getting
           return {
             seed : {
+              id                  : v._id,
               common_name         : v.common_name,
               variety_url         : v.variety_url,
               variety_or_cultivar : v.variety_or_cultivar,
@@ -58,9 +60,12 @@ function(doc, req) {
               created             : v.created
             }
           };
-        }) 
+        });*/
 	  }
+	  log(data);
 
-	  return Mustache.to_html(ddoc.templates.editsowing, data, ddoc.templates.partials);
+	  var html = Mustache.to_html(ddoc.templates.editsowing, data, ddoc.templates.partials);
+	  log(html);
+	  return html;
 
 }

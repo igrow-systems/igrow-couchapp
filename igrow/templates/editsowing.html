@@ -12,8 +12,14 @@
     <!-- form to create a post -->
     <form id="new-sowing" action="new.html" method="post">
       <h1>{{pageTitle}}</h1>
-      <p><label for="seed">Seed</label>
-      <select name="seed_id"></select></p>
+      
+      <p><label for="seed_id">Seed</label>
+      <select name="seed_id">
+      	
+        
+        
+      </select>
+      </p>
       
       <p><label for="quantity">Quantity</label>
       <input type="text" name="quantity" value="{{quantity}}"></input></p>
@@ -80,12 +86,26 @@
         });
       }
 
-      $("#preview").click(function() {
+      $('#preview').click(function() {
         var markdown = app.require("vendor/couchapp/lib/markdown");
         //var html = render(postDoc);
         $('#show-preview').html(html);
         $('body').scrollTo('#show-preview', {duration: 500});
       });
+      
+      $.couch.db("igrow").view("igrow/seeds", {
+    	    success: function(data) {
+    	        console.log(data);
+    	        
+    	        //$('#seed_id').append($("<option></option>")
+    	                //.attr("value", key)
+    	                //.text(value)); )
+    	    },
+    	    error: function(status) {
+    	        console.log(status);
+    	    },
+    	    reduce: false
+    	});
       
     });
   </script>
