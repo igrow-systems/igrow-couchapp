@@ -13,16 +13,27 @@
     <form id="new-sowing" action="new.html" method="post">
       <h1>{{pageTitle}}</h1>
       
+      <p><label for="seed_id">Common Name</label>
+      <select id="common_name" name="common_name"></select>
+      </p>
+      
       <p><label for="seed_id">Seed</label>
-      <select name="seed_id">
-      	
-        
-        
+      <select id="seed_id" name="seed_id"></select>
+      </p>
+      
+      <p>
+      <label for="container_type">Container Type</label>
+      <select id="container_type" name="container_type">
+        <option value="tray">Tray</option>
+        <option value="half_tray">Half Tray</option>
+        <option value="9_cm_pot">9cm Pot</option>
+        <option value="6_cell_tray">6 Cell Tray</option>
       </select>
       </p>
       
       <p><label for="quantity">Quantity</label>
       <input type="text" name="quantity" value="{{quantity}}"></input></p>
+      
       <p>
         <label for="tags">Click tags to add them. (split by ',')</label>
         <input size="50" type="text" name="tags" value="{{tags}}">
@@ -47,7 +58,7 @@
       var postDoc = {{{doc}}};
 
       $('label[for=common_name]').append(' <em>with '+(postDoc.format||'html')+'</em>');
-      $("form#new-seed").submit(function() {
+      $("form#new-sowing").submit(function() {
         postDoc.user = $$("#account").userCtx.name;
         
         postDoc.quantity = $("input[name=quantity]").val();
@@ -93,13 +104,17 @@
         $('body').scrollTo('#show-preview', {duration: 500});
       });
       
-      $.couch.db("igrow").view("igrow/seeds", {
+      $.couch.db("igrow").view("igrow/plants", {
     	    success: function(data) {
     	        console.log(data);
-    	        
-    	        //$('#seed_id').append($("<option></option>")
-    	                //.attr("value", key)
-    	                //.text(value)); )
+    	        var plants = data.rows;
+    	        //jQuery.each(seeds, function(i, val) {
+    	        for (var i = 0; i < plants.length; ++i) {
+    	        	$('#common_name').append($("<option></option>")
+        	                .attr("value", plants[i].key)
+        	                .text(plants[i].key));
+    	       	}
+    	        //
     	    },
     	    error: function(status) {
     	        console.log(status);
@@ -107,6 +122,31 @@
     	    reduce: false
     	});
       
+      $('#common_name').select(function () {
+    	
+    	  $.couch.db("igrow").view("igrow/seeds", {
+    	  	    success: function(data) {
+    	  	        console.log(data);
+    	  	        var seeds = data.rows;
+    	  	        //jQuery.each(seeds, function(i, val) {
+    	  	        for (var i = 0; i < seeds.length; ++i) {
+    	  	        	$('#seed_id').append($("<option></option>")
+    	      	                .attr("value", seeds[i]._id)
+    	      	                .text(seeds[i].value.variety_or_cultivar + " - " + seeds[i].value.supplier));
+    	  	       	}
+    	  	        //
+    	  	    },
+    	  	    error: function(status) {
+    	  	        console.log(status);
+    	  	    },
+    	  	    reduce: false,
+    	  	    key: $('#common_name').options[$('#common_name').selectedIndex].value
+    	  	    });
+        
+      });        
+      
+      
+  	        
     });
   </script>
 </html>

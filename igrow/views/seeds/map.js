@@ -1,3 +1,6 @@
 function(doc) {
-    emit(doc.common_name, doc);
+	
+	if (doc.type == "seed") {
+      emit(doc.common_name, doc);
+	}
 }
